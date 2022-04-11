@@ -203,3 +203,9 @@ A completer
     show ip dhcp binding    // Afficher les bails en cours
 
     show ip dhcp pool     // Afficher les pools adressables du service
+
+Notes : 
+
+On peut mettre des vlan avec le switch de base inclus dans gns3, les ports en mode trunk sont les ports en modes dot1q puis les autres c'est pareil que de base, en mode access.
+
+Le serveur DHCP ne va pas être géré par le routeur mais par une machine elle-même qui gérera une interface pour chaque vlan avec le module 8021q dans modprobe etc.
