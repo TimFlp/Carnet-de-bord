@@ -204,6 +204,47 @@ A completer
 
     show ip dhcp pool     // Afficher les pools adressables du service
 
+## **Lundi 11/04 Edit schéma réseau + (DNS) :** 
+<br>
+
+### En mettant en concret mon réseau sur GNs3, j'ai été amené à modifier mon schéma réseau de base, il ressemble désormais à ça : 
+
+![schém2](assets/schém2.png)
+
+### J'ai modifié plusieurs choses : 
+* J'ai retiré le Vlan 40 pour faciliter les choses notamemment pour le DHCP.
+* J'ai ajouter des switchs pour chacuns des vlans pour être dans des conditions plus réelles.
+
+### Pour le service DNS qui sera mis en place, on utilisera le service **bind9**.
+
+    sudo apt install bind9 dnsutils    // Pour l'installer
+
+### Création dossier zones :
+    sudo mkdir /etc/bind/zones
+
+### 
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 Notes : 
 
 On peut mettre des vlan avec le switch de base inclus dans gns3, les ports en mode trunk sont les ports en modes dot1q puis les autres c'est pareil que de base, en mode access.
