@@ -66,7 +66,6 @@ VLAN 40 :
 ip access-list extended VLAN40
 permit udp any any eq 67
 permit udp any any eq 68
-permit tcp any any eq 80
 permit icmp any any
 permit tcp 192.168.40.0 0.0.0.255 192.168.10.0 0.0.0.255 
 permit tcp 192.168.40.0 0.0.0.255 192.168.20.0 0.0.0.255

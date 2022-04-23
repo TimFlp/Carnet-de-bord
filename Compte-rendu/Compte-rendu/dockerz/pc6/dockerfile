@@ -1,4 +1,4 @@
-FROM debian:stretch 
+FROM debian:latest
 
 RUN apt-get update -y \
     && apt-get upgrade -y \
@@ -10,13 +10,13 @@ RUN apt-get update -y \
     && apt-get install -y nano \
     && apt-get install -y openssh-server \
     && apt-get install -y openssh-client \
-    #&& apt-get install -y macchanger \
     && apt-get install -y sudo \
-    #&& apt-get install -y apache2 \
     && apt-get install -y iptables \
-    && apt-get install -y curl 
+    && apt-get install -y curl
 
 WORKDIR /home/pc6
 ADD mac.sh /home/pc6/mac.sh
-RUN chmod 777 /home/pc6/mac.sh
+RUN chmod 700 /home/pc6/mac.sh
+
+
 

@@ -1,6 +1,17 @@
 # Carnet de bord individuel pour la SAE 21 :
+## <u> Sommaire :</u>
+    Conception réseau 
+    Configuration Serveur Web
+    Sécurisation Serveur Web
+    Configuration Routeur,Vlan,DHCP
+    Création de Dockers Debian
+    Création Access-lists
+    Configuration service DNS
+    Configuration NAT partie virtualisée
 
-## **Conception et dessin du schéma du réseau final :**
+----- 
+
+## <u>**Conception et dessin du schéma du réseau final :**</u>
 
 ### *Le plus important avant de commencer quoi que ce soit de concret pour la réalisation du réseau de l'entreprise, il faut faire un plan. Il faut donc réfléchir sur quel réseau nous allons placer nos 3 zones distinctes, combien il y aura de machines en total, en bref avoir une vue concrète pour nous simplifier la vie et ne pas partir dans tout les sens.*    <br>     
 <br>
@@ -25,7 +36,7 @@
 
 ------
 
-## **(Configuration serveur web)** 
+## <u>**(Configuration serveur web)** </u>
 <br>
 
 ### Pour les différents serveurs Web, j'ai choisi d'utiliser le module apache2 disponible sur Debian car il est très simple et rapide à mettre en place mais aussi parce-que nous avons fait plusieurs TP dessus.
@@ -57,7 +68,7 @@ A completer
 
 -----------
 
-## **(Sécurisation serveur web) :** 
+## <u> **(Sécurisation serveur web) :** </u>
 <br>
 
 ### Finalement, pour compléter mon travail sur les différents serveurs web qu'il y aura dans notre plan de réseau, je me suis penché sur l'aspect sécurisation d'un serveur apache2.
@@ -71,7 +82,7 @@ A completer
 
 ----------
 
-## **(Routeur,Vlan,DHCP) :** 
+## <u>**(Routeur,Vlan,DHCP) :** </u>
 <br>
 
 ### Je me suis occupé également des différents switchs et routeur Cisco que nous aurons dans le réseau final. J'ai donc écrit un petit mémo pour pouvoir configurer rapidement les différentes interfaces du routeur, puis pour la configuration des vlan ainsi que le DHCP. 
@@ -178,10 +189,113 @@ A completer
 
     show ip dhcp pool     // Afficher les pools adressables du service
 
-## **Configuration des machines avec Docker :** 
+
+------
+## <u>**Configuration des machines avec Docker :**</u> 
 
 ![docker_vie](assets/docker.png)
 
-### Au début du projet, j'avais utiliser pour GNS3 les images que nous avions utiliser lors des précédents TPs de la ressource R201. Cependant, je me suis vite rendu compte que les configurations que je faisais étaient perdues...
-### J'ai donc d'abord cherché comment mettre en place un volume persistant pour les dockers puis au bout d'une semaine infructueuse j'ai décidé de me renseigner sur la création de Docker. De plus, c'est une techno qui m'intéressait donc je ne perdais rien.
+### Au début du projet, j'avais utiliser pour GNS3 les images que nous avions utiliser lors des précédents TPs de la ressource R201. Cependant, je me suis vite rendu compte que les configurations que je faisais dessus étaient perdues...
+<br>
+
+### J'ai donc d'abord cherché comment mettre en place un volume persistant pour les dockers puis au bout d'une semaine infructueuse j'ai décidé de me renseigner sur la création de **Docker**. De plus, c'est une techno qui m'intéressait donc je ne perdais rien à le faire.
+
+## **Réalisation :** 
+
+### J'ai tout d'abord créer un container **Debian** simple avec simplement des outils pour faire des actions de réseaux simples comme curl ou alors ping, mais j'ai eu un problème. Peut importe mes paramètres de lancement, **je n'arrivais pas à conserver une adresse MAC stable**, qui était le point le plus important à conserver pour mes dockers. 
+<br>
+
+### Je me suis donc renseigné et **j'ai choisi de placer un script bash personnalisé** pour chacuns de mes dockers. Ce script bash permettait de placer d'une part **une adresse mac personnalisée** avec **ip link** ainsi que d'**activer le service ssh** sur chacunes des machines pour le service informatique. Finalement, le script sert aussi à faire une requête automatique vers le service DHCP du routeur.
+
+## **Mon bash :**
+
+    #!/bin/sh
+
+    ip link set eth0 down     
+    ip link set eth0 address 00:42:38:11:11:11   # Mise en place de la MAC 
+    ip link set eth0 up
+    dhclient eth0   # Requête DHCP
+    service ssh start  # Mise en place SSH
+    echo "PasswordAuthentication yes" >> /etc/ssh/ssh_config
+    echo "Port 22" >> /etc/ssh/sshd_config
+    echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+    echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
+    useradd -d /home/pc1-ssh -p password test  # Création utilisateur pour SSH
+<u>***Bash pour le PC-1***</u>
+
+## **Mon dockerfile :**
+
+    # Récupère la dernière version de debian possible, plus sécurisé (théoriquement)
+    FROM debian:latest
+
+    #Installation des dépendances
+    RUN apt-get update -y \
+        && apt-get upgrade -y \
+        && apt-get install -y apt-utils \
+        && apt-get install -y iproute2 \
+        && apt-get install -y net-tools \
+        && apt-get install -y iputils-ping \
+        && apt-get install -y isc-dhcp-client \
+        && apt-get install -y nano \
+        && apt-get install -y openssh-server \
+        && apt-get install -y openssh-client \
+        && apt-get install -y sudo \
+        && apt-get install -y iptables \
+        && apt-get install -y curl
+
+    WORKDIR /home/pc1  # Met en place le répertoire de travail pour pc1
+    ADD mac.sh /home/pc1/mac.sh     # Ajoute dans le nouveau répertoire notre fichier bash inclus dans le dossier avec le docker
+    RUN chmod 700 /home/pc1/mac.sh  # Rajoute les droits aux fichier bash pour qu'il puisse être executé
+<u>***Dockerfile du PC1***</u>
+
+### Au final, j'ai donc mes dockers qui seront mes pc et que je placerais dans mon montage GNS3, j'aurai juste alors à démarrer sur chacunes des machines le script à chaque relancement. J'aurai voulu que cela se fasse automatiquement au démarrage mais après plusieurs tests je n'ai jamais réussi.
+
+------
+
+## <u>**Les Access-list (ACL)**</u>
+<br>
+
+### C'est l'une des dernières choses que j'ai réalisé et qui m'a sûrement pris le plus de temps pour que tout fonctionne.
+### Notamment car il y avait beaucoup de critères à respecter comme le fait de ne pas pouvoir communiquer entre Vlan mais la possibilitée d'établir une connexion SSH avec comme source le Service Informatique et ainsi de suite.
+
+<br>
+
+### Avant d'écrire quoi que ce soit, j'ai réfléchis à quels ports étaient importants ou non pour pouvoir ensuite bloquer tout les autres ainsi que les adresses qui pouvaient communiquer ou non entre elles :
+
+<br>
+
+### <u>Ce qui a donné :</u> 
+* ### Autoriser les ports tcp 80 et 443 pour aller visiter des sites Web
+* ### Autoriser les ports udp 67 et 68 pour le service Dhclient
+* ### Autoriser le port 22 ayant pour source les adresses du service informatique
+* ### Autoriser n'importe quel port tcp si la communication a été initialisié par le port 80 ou 443
+* ### Accepter le protocole ICMP (ping) si il n'est pas à destination d'un Vlan dont il n'a pas le droit de communiquer.
+* ### Refuser tout le reste et loguer tout ce qui a été refusé
+
+<br>
+
+### Et cela a donné par exemple pour le Vlan40 ces règles : 
+
+    VLAN 40 : 
+    ip access-list extended VLAN40
+    permit udp any any eq 67
+    permit udp any any eq 68
+    permit icmp any any
+    permit tcp 192.168.40.0 0.0.0.255 192.168.10.0 0.0.0.255 
+    permit tcp 192.168.40.0 0.0.0.255 192.168.20.0 0.0.0.255
+    permit tcp 192.168.40.0 0.0.0.255 192.168.30.0 0.0.0.255
+    permit ip host 192.168.255.254 any
+    deny ip any any log
+
+### Pour finir, il ne faut pas oublier d'appliquer ces règles aux bons Vlan et donc aux bonnes sous-interfaces :
+
+<br>
+
+    interface FastEthernet0/1.40
+    ip access-group VLAN40 in   # Pour établir les règles pour les connexions entrantes
+    ip access-group VLAN40 out  # Pour établir les règles pour les connexions sortantes
+***Comme toujours, les configurations complètes des ACL sont présentes dans le dossier Compte-rendu.***
+
+-----
+## <u>**Configuration DNS :**</u>
 
