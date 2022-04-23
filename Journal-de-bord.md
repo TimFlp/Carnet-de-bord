@@ -181,3 +181,7 @@ A completer
 ## **Configuration des machines avec Docker :** 
 
 ![docker_vie](assets/docker.png)
+
+### Au début du projet, j'avais utiliser pour GNS3 les images que nous avions utiliser lors des précédents TPs de la ressource R201. Cependant, je me suis vite rendu compte que les configurations que je faisais étaient perdues...
+### J'ai donc d'abord cherché comment mettre en place un volume persistant pour les dockers puis au bout d'une semaine infructueuse j'ai décidé de me renseigner sur la création de Docker. De plus, c'est une techno qui m'intéressait donc je ne perdais rien.
+
