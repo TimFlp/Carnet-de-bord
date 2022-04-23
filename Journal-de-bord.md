@@ -299,3 +299,110 @@ A completer
 -----
 ## <u>**Configuration DNS :**</u>
 
+![bind](assets/bind.png)
+
+### ***Pour être honnête, je n'ai pas vraiment approfondi mon travail sur le DNS car je ne devais pas le faire de base. J'ai pu quand même faire les réglages de bases mais j'imagine que niveau sécurité ce n'est pas le top et je compte m'y pencher pendant les vacances.***
+
+<br>
+
+### Pour le service DNS qui est présent dans la DMZ, j'ai choisi le package Bind9 qui est simple d'utilisation et qui nous a été recommandé.
+
+### J'ai donc pu écrire un manuel qui me permet de refaire les manipulations autant de fois que nécessaires :
+
+    Nettoyer la machine des précédentes configurations :
+
+    sudo rm -rf /etc/bind && sudo rm -rf /var/cache/bind
+    sudo apt purge -y bind9 dnsutils && sudo apt autoremove
+
+    Installation paquets importants :
+
+    sudo apt install bind9 dnsutils 
+
+    Instructions : 
+
+    sudo cp /etc/bind/bd.local /etc/bind/Rtequila
+    sudo cp /etc/bind/bd.local /etc/bind/Inverse
+
+        1) Modifier le fichier named.conf : 
+            nano named.conf
+
+    include "/etc/bind/named.conf.options";
+    include "/etc/bind/named.conf.local";
+    include "/etc/bind/named.conf.default-zones";
+
+    zone "Rtequila" IN {
+            type master;
+            file "/etc/bind/Rtequila";
+    };
+
+    zone "2.0.16.172.in-addr.arpa." IN {
+            type master;
+            file "/etc/bind/inverse";
+    };
+
+
+        2) Modifier le fichier Rtequila : 
+        
+    ;
+    ; BIND data file for local loopback interface
+    ;
+    $TTL    604800
+    @       IN      SOA     server1.Rtequila. root.Rtequila. (
+                                2         ; Serial
+                            604800         ; Refresh
+                            86400         ; Retry
+                            2419200         ; Expire
+                            604800 )       ; Negative Cache TTL
+    ;
+    @       IN      NS      server1.Rtequila.
+    server1 IN      A       172.16.0.2
+    www     IN      CNAME   server1.Rtequila.
+
+
+        3) Modifier le fichier Inverse :
+        
+    ;
+    ; BIND data file for local loopback interface
+    ;
+    $TTL    604800
+    @       IN      SOA     server1.Rtequila. root.Rtequila. (
+                                2         ; Serial
+                            604800         ; Refresh
+                            86400         ; Retry
+                            2419200         ; Expire
+                            604800 )       ; Negative Cache TTL
+    ;
+    @       IN      NS      server1.Rtequila.
+    server1 IN      A       172.16.0.2
+    1       IN      PTR     server1.Rtequila.
+
+
+    Changer son service dns : 
+
+    nano /etc/resolv.conf
+    nameserver 172.16.0.2
+
+    Lancer le service : 
+
+    sudo service bind9 start
+
+    Vérifier le statut : 
+
+    sudo service bind9 status
+
+### **Pour tester ma configuration, je peux faire différents tests avec l'utilitaire nslookup ou bien dig**
+
+    nslookup
+        > service type
+        > IP serveur 
+    ![nslookup](/assets/nslookup.jpg)
+
+### Pour dig : 
+
+    dig -t type Rtequila
+
+## RAJOUTER FORWARD 8.8.8.8
+
+----
+
+### Enfin, ma dernière partie de travail était de mettre en place le NAT de mes adresses privées vers celles de la DMZ, pour transmettre finalement mes paquets sur Internet.
