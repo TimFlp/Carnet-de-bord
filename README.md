@@ -8,7 +8,7 @@
 ### Pour cela j'ai donc utiliser l'extension Draw.io disponible sur VisualStudio et j'ai pu réaliser ce schéma-ci : 
 <br>
 
-![schéma](assets/Schém2.png)
+![schéma](https://github.com/TimFlp/Carnet-de-bord/blob/master/assets/sch%C3%A9m2.png)
 
 <br>
 
