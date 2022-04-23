@@ -179,3 +179,5 @@ A completer
     show ip dhcp pool     // Afficher les pools adressables du service
 
 ## **Configuration des machines avec Docker :** 
+
+![docker_vie](assets/docker.png)
