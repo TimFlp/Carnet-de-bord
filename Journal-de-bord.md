@@ -1,13 +1,13 @@
 # Carnet de bord individuel pour la SAE 21 :
 ## <u> Sommaire :</u>
-    Conception réseau 
-    Configuration Serveur Web
-    Sécurisation Serveur Web
-    Configuration Routeur,Vlan,DHCP
-    Création de Dockers Debian
-    Création Access-lists
-    Configuration service DNS
-    Configuration NAT partie virtualisée
+* ### [Conception Réseau](#uconception-et-dessin-du-schéma-du-réseau-final-u)
+* ### [Configuration Serveur Web](#uconfiguration-serveur-web-u)
+* ### [Sécurisation Serveur Web](#u-sécurisation-serveur-web--u)
+* ### [Configuration Routeur,Vlan,DHCP](#urouteurvlandhcp--u)
+* ### [Création de Dockers Debian](#uconfiguration-des-machines-avec-docker-u)
+* ### [Création Access-lists](#ules-access-list-aclu)
+* ### [Configuration service DNS](#uconfiguration-dns-u)
+* ### [Configuration NAT partie virtualisée](#uconfiguration-du-nat-u)
 
 ----- 
 
@@ -405,4 +405,56 @@ A completer
 
 ----
 
+## <u>**Configuration du NAT :**</u>
+
 ### Enfin, ma dernière partie de travail était de mettre en place le NAT de mes adresses privées vers celles de la DMZ, pour transmettre finalement mes paquets sur Internet.
+
+<br>
+
+### **Illustration du fonctionnement :** 
+
+<br>
+
+![nat](assets/nat.JPG)
+
+### Pour le NAT, j'ai choisi de faire en sorte que **chaque VLAN ait une adresse unique natté sur le réseau de la DMZ** :
+
+| Numéro VLAN  | Adresse VLAN       | Adresse natté |
+| :--------------- |:---------------:| -----:|
+| 10  |   192.168.10.0/24       |  172.16.0.4/29 |
+| 20  | 192.168.20.0/24            |   172.16.0.5/29 |
+| 30  | 192.168.30.0/24        |    172.16.0.6/29 |
+
+### Comme cela, **on rajoute une couche de sécurité** et le **Vlan40 ne pourra jamais voyager plus haut que le réseau virtualisé sous Gns3**.
+
+<br>
+
+## <u>Pour ce faire sur le routeur, on entre les commandes suivantes :</u>
+
+### On établit tout d'abord sur chaque sous-interfaces l'IP natté qu'on va attribué au VLAN (ici le VLAN10) :
+
+    interface FastEthernet0/0.10    # On définit la sous interface
+
+    ip nat pool POOL-VLAN10 172.16.0.4 172.16.0.4 netmask 255.255.255.248    # On indique l'adresse natté
+
+    access-list 10 permit 192.168.10.0 0.0.0.255   # On définit le fait que seulement les adresses du VLAN10 sous la forme 192.168.10.0/24 pourront emprunter cette adresse.
+
+    ip nat inside source list 10 pool POOL-VLAN10 overload # On indique qu'on natte l'adresse d'une patte interne vers une patte externe. L'argument overload indique que plusieurs machines peuvent être nattés sous la même adresse.
+
+### ***Il faut donc réaliser cela pour les deux autres VLAN***
+
+<br>
+
+### Finalement, il ne faut pas oublier d'adresser sur la patte externe du routeur les adresses qui pourront êtres nattés sur son interface FastEthernet0/0 ( celle présente dans la DMZ ) :
+
+<br>
+
+    conf t
+    interface FastEthernet0/0
+    ip address 172.16.0.4 255.255.255.248 secondary  # Adressage classique mais avec argument secondary pour indiquer au routeur qu'on met plusieurs adresses sur la même interface, ce qui est théoriquement infaisable de base.
+    
+    ip address 172.16.0.5 255.255.255.248 secondary
+    ip address 172.16.0.6 255.255.255.248 secondary
+    ip nat inside
+    end
+    write mem
