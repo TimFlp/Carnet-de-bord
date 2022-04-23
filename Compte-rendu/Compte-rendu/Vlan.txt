@@ -1,0 +1,35 @@
+VLAN10 :
+
+interface FastEthernet1/0.10
+encapsulation dot1Q 10
+ip address 192.168.10.254 255.255.255.0 
+no shutdown
+end
+wr
+
+VLAN20 :
+
+interface FastEthernet1/0.20
+encapsulation dot1Q 20
+ip address 192.168.20.254 255.255.255.0 
+no shutdown
+end
+wr
+
+VLAN30 :
+
+interface FastEthernet1/0.30
+encapsulation dot1Q 30
+ip address 192.168.30.254 255.255.255.0 
+no shutdown
+end
+wr
+
+VLAN40 :
+
+interface FastEthernet1/0.40
+encapsulation dot1Q 40
+ip address 192.168.40.254 255.255.255.0 
+no shutdown
+end
+wr

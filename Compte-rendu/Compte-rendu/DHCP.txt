@@ -1,0 +1,46 @@
+ip dhcp excluded-address 192.168.10.254
+ip dhcp excluded-address 192.168.20.254
+ip dhcp excluded-address 192.168.30.254
+ip dhcp excluded-address 192.168.40.254
+
+ip dhcp pool pc3
+   host 192.168.10.1 255.255.255.0
+   hardware-address 0042.3833.3333
+   default-router 192.168.10.254 
+   dns-server 172.16.0.2 
+
+ip dhcp pool pc4
+   host 192.168.10.2 255.255.255.0
+   hardware-address 0042.3844.4444
+   default-router 192.168.10.254 
+   dns-server 172.16.0.2 
+
+ip dhcp pool pc2
+   host 192.168.20.2 255.255.255.0
+   hardware-address 0042.3822.2222
+   default-router 192.168.20.254 
+   dns-server 172.16.0.2 
+
+ip dhcp pool pc1
+   host 192.168.20.1 255.255.255.0
+   hardware-address 0042.3811.1111
+   default-router 192.168.20.254 
+   dns-server 172.16.0.2 
+
+ip dhcp pool pc6
+   host 192.168.30.1 255.255.255.0
+   hardware-address 0042.3866.6666
+   default-router 192.168.30.254 
+   dns-server 172.16.0.2 
+
+ip dhcp pool pc5
+   host 192.168.30.2 255.255.255.0
+   hardware-address 0042.3855.5555
+   dns-server 172.16.0.2 
+   default-router 192.168.30.254 
+
+ip dhcp pool web
+   host 192.168.30.253 255.255.255.0
+   hardware-address ce40.777a.e9ce
+   dns-server 172.16.0.2 
+   default-router 192.168.40.254 

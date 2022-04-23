@@ -1,0 +1,95 @@
+VLAN 10 : Administratifs
+
+ip access-list extended VLAN10
+permit udp any any eq 67
+permit udp any any eq 68
+permit tcp 172.16.0.0 0.0.0.7 192.168.10.0 0.0.0.255 
+permit tcp 172.16.0.0 0.0.0.7 192.168.20.0 0.0.0.255 
+permit tcp 172.16.0.0 0.0.0.7 192.168.30.0 0.0.0.255 
+permit tcp 192.168.40.0 0.0.0.255 192.168.10.0 0.0.0.255 established
+deny icmp 192.168.20.0 0.0.0.255 192.168.10.0 0.0.0.255
+deny icmp 192.168.30.0 0.0.0.255 192.168.10.0 0.0.0.255
+permit icmp any any
+permit ip host 192.168.255.254 any
+permit tcp 192.168.30.0 0.0.0.255 any eq 22
+deny ip 192.168.20.0 0.0.0.255 192.168.10.0 0.0.0.255
+deny ip 192.168.30.0 0.0.0.255 192.168.10.0 0.0.0.255
+permit tcp any any eq 80
+permit tcp any any eq 443 
+deny ip any any log
+
+
+VLAN 20 : Commerciaux
+
+ip access-list extended VLAN20
+permit udp any any eq 67
+permit udp any any eq 68
+permit tcp 172.16.0.0 0.0.0.7 192.168.10.0 0.0.0.255 
+permit tcp 172.16.0.0 0.0.0.7 192.168.20.0 0.0.0.255 
+permit tcp 172.16.0.0 0.0.0.7 192.168.30.0 0.0.0.255 
+permit tcp 192.168.40.253 0.0.0.255 eq 80 192.168.20.0 0.0.0.255
+permit tcp 192.168.40.0 0.0.0.255 192.168.20.0 0.0.0.255 established
+deny icmp 192.168.30.0 0.0.0.255 192.168.20.0 0.0.0.255
+deny icmp 192.168.10.0 0.0.0.255 192.168.20.0 0.0.0.255
+permit icmp any any
+permit ip host 192.168.255.254 any
+permit tcp 192.168.30.0 0.0.0.255 any eq 22 
+deny ip 192.168.10.0 0.0.0.255 192.168.20.0 0.0.0.255
+deny ip 192.168.30.0 0.0.0.255 192.168.20.0 0.0.0.255
+permit tcp any any eq 80
+permit tcp any any eq 443 
+deny ip any any log
+
+
+VLAN 30 : Service Informatique
+
+ip access-list extended VLAN30
+permit udp any any eq 67
+permit udp any any eq 68
+permit tcp 172.16.0.0 0.0.0.7 192.168.10.0 0.0.0.255 
+permit tcp 172.16.0.0 0.0.0.7 192.168.20.0 0.0.0.255 
+permit tcp 172.16.0.0 0.0.0.7 192.168.30.0 0.0.0.255 
+permit tcp 192.168.40.253 0.0.0.255 eq 80 192.168.30.0 0.0.0.255
+permit tcp 192.168.40.0 0.0.0.255 192.168.30.0 0.0.0.255 
+deny icmp 192.168.20.0 0.0.0.255 192.168.30.0 0.0.0.255
+deny icmp 192.168.10.0 0.0.0.255 192.168.30.0 0.0.0.255
+permit icmp any any
+permit ip host 192.168.255.254 any
+deny ip 192.168.10.0 0.0.0.255 192.168.30.0 0.0.0.255
+deny ip 192.168.20.0 0.0.0.255 192.168.30.0 0.0.0.255
+permit tcp any any eq 80
+permit tcp any any eq 443 
+deny ip any any log
+
+VLAN 40 : 
+
+ip access-list extended VLAN40
+permit udp any any eq 67
+permit udp any any eq 68
+permit tcp any any eq 80
+permit icmp any any
+permit tcp 192.168.40.0 0.0.0.255 192.168.10.0 0.0.0.255 
+permit tcp 192.168.40.0 0.0.0.255 192.168.20.0 0.0.0.255
+permit tcp 192.168.40.0 0.0.0.255 192.168.30.0 0.0.0.255
+permit ip host 192.168.255.254 any
+deny ip any any log
+
+
+
+// Appliquer les ACL sur les interfaces VLAN :
+
+interface FastEthernet0/1.10
+ip access-group VLAN10 in
+ip access-group VLAN10 out
+
+interface FastEthernet0/1.20
+ip access-group VLAN20 in
+ip access-group VLAN20 out
+
+interface FastEthernet0/1.30
+ip access-group VLAN30 in
+ip access-group VLAN30 out
+
+interface FastEthernet0/1.40
+ip access-group VLAN40 in
+ip access-group VLAN40 out

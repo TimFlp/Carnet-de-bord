@@ -1,0 +1,20 @@
+Clean la machine :
+
+sudo rm -rf /etc/apache2 && sudo rm -rf /var/www/html/
+sudo apt purge -y apache2 && sudo apt autoremove
+
+Installation pacquet apache2 :
+
+sudo apt install apache2 
+
+Page serveur web : 
+
+echo "SERVEUR EXTERNE" > /var/www/html/index.html
+
+Lancer le service : 
+
+sudo service apache2 start
+
+Vérifier le statut : 
+
+sudo service apache2 status

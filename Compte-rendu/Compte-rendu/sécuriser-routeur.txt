@@ -1,0 +1,18 @@
+https://linux-note.com/cisco-securiser-lacces-a-un-router/
+
+
+Router(config)# line console 0
+Router(config-line)# password mot-de-passe-console
+Router(config-line)# login
+
+Router(config)# enable password mot-de-passe-mode-privilégié
+
+Router(config)#service password-encryption
+
+Router(config)# enable secret mot-de-passe-mode-privilégié
+
+Router(config)# line vty 0 4
+Router(config-line)# password mot-de-passe-mode-acces-distant
+Router(config-line)# login
+Router(config-line)# exit
+Router(config)#

@@ -1,15 +1,6 @@
 # Carnet de bord individuel pour la SAE 21 :
 
-## Jours : 
-* [Mardi 29/03 (Schéma réseau)](#mardi-2903-schéma-réseau)
-* [Vendredi 01/04 (Configuration serveur web)](#vendredi-0104-configuration-serveur-web)
-* [Lundi 04/04 (Sécurisation serveur web)](#lundi-0404-sécurisation-serveur-web)
-* [Mardi 05/04 (Routeur,Vlan,DHCP)](#mardi-0504-routeurvlandhcp)
-* [Jours](#carnet-de-bord-individuel-pour-la-sae-21)
-
-----
-
-## **Mardi 29/03 (Schéma réseau) :**
+## **Conception et dessin du schéma du réseau final :**
 
 ### *Le plus important avant de commencer quoi que ce soit de concret pour la réalisation du réseau de l'entreprise, il faut faire un plan. Il faut donc réfléchir sur quel réseau nous allons placer nos 3 zones distinctes, combien il y aura de machines en total, en bref avoir une vue concrète pour nous simplifier la vie et ne pas partir dans tout les sens.*    <br>     
 <br>
@@ -17,24 +8,24 @@
 ### Pour cela j'ai donc utiliser l'extension Draw.io disponible sur VisualStudio et j'ai pu réaliser ce schéma-ci : 
 <br>
 
-![schéma](assets/Schémaréseau.png)
+![schéma](assets/Schém2.png)
 
 <br>
 
 ### Il y aura donc dans notre réseau d'entreprise 3 zones distinctes : <br> 
 <br>
 
-### - La partie réseau entreprise en bleu qui sera virtualisé, avec un serveur Web, les différents répartissements du réseau entre chaque branches du réseau (Administratifs, etc...), tous répartis dans des Vlan **pour plus de sécurité**. **J'ai également choisi un réseau en /16** pour plus de flexibilité et pouvoir adresser les machines sous la forme : **150.100.Vlan.Machine**
+### - La partie réseau entreprise en bleu qui sera virtualisé, avec un serveur Web, les différents répartissements du réseau entre chaque branches du réseau (Administratifs, etc...), tous répartis dans des Vlan **pour plus de sécurité**. **J'ai également choisi un réseau en /16** pour plus de flexibilité et pouvoir adresser les machines sous la forme : **192.168.Vlan.Machine**. J'ai placé un switch par Vlan pour faciliter la mise en place de celles-ci (Un port du switch principal servira pour tout le Vlan10 et ainsi de suite...) mais également pour faciliter l'agrandissement possible dans le futur du matériel informatique. Ainsi, si on souhaite rajouter une machine, il suffira simplement de la relier au switch correspondant à son Vlan.
 <br> 
 
-### - Il y a également la DMZ, la partie physique du réseau (en orange au centre) que nous allons réaliser avec un routeur Mikrotik qui fera également office de pare-feu, un switch puis une machine qui servira de DNS ainsi que de serveur Web. **J'ai choisi un plan d'adressage en /30** également pour des raisons de **sécurité** pour ne pas qu'une machine étrangère au réseau puisse se connecter.
+### - Il y a également la DMZ, la partie physique du réseau (en orange au centre) que nous allons réaliser avec un routeur Mikrotik qui fera également office de pare-feu, un switch puis une machine qui servira de DNS ainsi que de serveur Web. **J'ai choisi un plan d'adressage en /29** également pour des raisons de **sécurité** pour ne pas qu'une machine étrangère au réseau puisse se connecter. Nous avons utiliser un routeur Mikrotik car nous en avions beaucoup à disposition mais surtout parcequ'il est très polyvalent, il peut quasiment tout faire pour une taille très réduite. Egalement, nous connaissions déjà certaines manipulations sur ces routeurs donc nous serions directement plus à l'aise.
 <br>
 
-### - Finalement, il y a le réseau de l'IUT en rouge, que nous gérons pas et qui est adressé en 10.214.0.0/16.
+### - Finalement, il y a le réseau de l'IUT en rouge, que nous gérons pas et qui est adressé en 10.214.0.0/16
 
 ------
 
-## **Vendredi 01/04 (Configuration serveur web) :** 
+## **(Configuration serveur web)** 
 <br>
 
 ### Pour les différents serveurs Web, j'ai choisi d'utiliser le module apache2 disponible sur Debian car il est très simple et rapide à mettre en place mais aussi parce-que nous avons fait plusieurs TP dessus.
@@ -43,7 +34,7 @@
 <br>
 
 ![preview](assets/web.JPG)
-
+*Tous les codes sont dans le dossier configuration.*
 <br>
 
 ### Pour pouvoir **mettre en place le service apache2** sur une machine **Linux** et en respectant les règles basiques de sécurité, il faut suivre une procédure très simple :
@@ -66,7 +57,7 @@ A completer
 
 -----------
 
-## **Lundi 04/04 (Sécurisation serveur web) :** 
+## **(Sécurisation serveur web) :** 
 <br>
 
 ### Finalement, pour compléter mon travail sur les différents serveurs web qu'il y aura dans notre plan de réseau, je me suis penché sur l'aspect sécurisation d'un serveur apache2.
@@ -80,15 +71,14 @@ A completer
 
 ----------
 
-## **Mardi 05/04 (Routeur,Vlan,DHCP) :** 
+## **(Routeur,Vlan,DHCP) :** 
 <br>
 
-### Je me suis occupé également des différents switchs et routeur Cisco que nous aurons dans le réseau final. J'ai donc écrit un petit mémo pour pouvoir configurer rapidement les différentes interfaces du routeur, puis pour la configuration des vlan ainsi que le DHCP.    
-
+### Je me suis occupé également des différents switchs et routeur Cisco que nous aurons dans le réseau final. J'ai donc écrit un petit mémo pour pouvoir configurer rapidement les différentes interfaces du routeur, puis pour la configuration des vlan ainsi que le DHCP. 
+***J'ai placé mes commandes finales dans le dossier Compte-rendu***
 <br>    
 
-## <u>Configuration Cisco (Sans Vlan) :</u> 
-    # enable
+## <u>Configuration interfaces</u> 
     Routeur# configure terminal   # Pour entrer en mode configuration
 
 ### Adressage IP :
@@ -127,126 +117,65 @@ A completer
 ## <u>Configuration VLAN :</u>
 <br>
 
-### ***La configuration des VLANs dans notre réseau se fera par rapports aux switchs. Nous ne configurons donc plus le routeur.*** 
+### **Pour ce qui est des VLAN, GNS3 nous propose une interface graphique simple pour configurer le Switch principal :**
 <br>
 
-### Configuration Cisco : 
-    # enable
-    Switch# configure terminal   # Pour entrer en mode configuration
+**METTRE PHOTOS**
 
-### Création VLAN : 
-    Switch# vlan NUMERO   // Numéro du VLAN
+ ***Il faut noter que l'appelation 'trunk' comme nous avons sur les switchs cisco de base, se nomme ici dot1q, c'est un nom différent mais qui ont la même utilité. On choisis donc ce mode là pour la liaison SwitchPrincipal -> Routeur***
 
-	Switch# name NOMVLAN   // Nom du VLAN
+<br>
 
-	Switch# exit    // Pour partir du mode de configuration
+### Après avoir fait cela, nous relions les switchs à chaque ports dont ils sont destinés et **il faut ensuite régler les Vlan au niveau du routeur** car c'est lui qui se chargera de retransmettre à chaque fois les paquets.
 
-### Attribution des interfaces aux différents VLAN : 
-    # enable
-	#Switch configure terminal 
-	#Switch(config) interface <Nom et numéro de l'interface>
-    #Switch(config) switchport mode access
-	#Switch(config) switchport access vlan NUMEROVLAN
-	#Switch(config) end
+<br>
 
-### Pour la liaison entre un switch et un routeur  :
-    # enable
-	#Switch configure terminal 
-	#Switch(config) interface <Nom et numéro de l'interface>
-    #Switch(config) switchport mode trunk
-	#Switch(config) end
+### La configuration du routeur se fait assez classiquement. Nous déclarons à chaque fois **une sous-interface par Vlan** puis nous déclarons le numéro de vlan qui sera encapsulé sur chaque paquets puis finalement nous mettons une adresse IP qui sera **l'adresse de la passerelle par défaut du Vlan**.
+<br>
 
-### Pour vérifier et regardre la configuration des Vlan : 
-    Switch(config)# do show vlan
+    interface FastEthernet1/0.10  // On déclare la sous-interface
+    encapsulation dot1Q 10   // On déclare l'encapsulation sous le VLANID : 10
+    ip address 192.168.10.254 255.255.255.0    // Adresse de la passerelle par défaut du VLAN
+    no shutdown  // Pour activer la sous-interface   
+    end   // Revenir au menu d'entrée du routeur
+    wr   // Pour inscrire les modifications dans la mémoire du routeur
 
-## <u>Adressage Cisco (avec Vlan) :</u>
+***Nous devons donc répéter l'action 3 fois pour les 4 Vlan***
 
-    # enable
-    Router# configure terminal 
+## **Finalement, il reste à configurer le service DHCP sur le routeur :**
+<br>
 
-    Router(config)# int gigabitEthernet 0/0.numéro_vlan
+### J'ai choisi de placer **le service DHCP sur le routeur** pour éviter des conflits entre mes futures Access-list et rendre le processus plus rapide que par une machine qui devrait traverser un premier Vlan puis par le routeur et ainsi de suite... 
 
-    Router(config-subif)# encapsulation dot1Q numéro_vlan
-    
-    Router(config-subif)# ip address <réseau> <masque en octal>
-    
-    Router(config-subif)# no shut
-    Router(config-subif)# end
+### Pour simplifier la vie du service informatique lorsqu'il faudra savoir quelle machine appartient à qui et ainsi de suite, j'ai choisi de configurer mon service **DHCP en fonction des adresses MAC** pour que chaque machines aient la même adresse à chaque démarrage.
 
-## <u>Configuration DHCP :</u>
+### Egalement, il s'agit d'une mesure de sécurité puisqu'une machine malveillante ne pourra pas demander de configuration au service DHCP puisqu'il n'est pas inscrit avec son adresse MAC. Cependant ce n'est pas magique, il peut comprendre comment fonctionne le réseau et ainsi s'adresse comme il le faut ou bien encore **spoofer** l'adresse mac d'une machine inscrite dans la configuration.
+<br>
 
-    Router# conf t
-    Router(config)# ip dhcp excluded-address FIRST IP LAST IP
+### **Configuration :**
 
-    Router(config)# ip dhcp pool Nom_pool    //Création POOL
+### Il faut tout d'abord inscrire les adresses que le service dhcp ne pourra pas attribuer car elles sont déjà prises d'emblée :
 
-    Router(config)# network 192.168.0.0 255.255.0.0   //Réseau dans lequel les adresses vont êtres
+    ip dhcp excluded-address 192.168.10.254  // IP passerelle VLAN10
+    ip dhcp excluded-address 192.168.20.254   // IP passerelle VLAN20
+    ip dhcp excluded-address 192.168.30.254   // IP passerelle VLAN30
+    ip dhcp excluded-address 192.168.40.254   // IP passerelle VLAN40
 
-    Router(config)# default-router IP    // Gateway
+### Finalement, on doit créer un *dhcp pool* **pour chaque machine** puisqu'on agit **en fonction des adresses MAC** : 
 
-    Router(config)# dns-server 192.168.0.1     // Serveur DNS
+    ip dhcp pool pc3   // Création d'un pool avec comme nom 'pc3'
+    host 192.168.10.1 255.255.255.0   // L'adresse IP que l'hôte va recevoir
+    hardware-address 0042.3833.3333   // Inscription de l'adresse mac de la machine, convention CISCO : 00:42:38:33:33:33 -> 0042.3833.3333
+    default-router 192.168.10.254    // Passerelle par défaut qui lui sera fourni
+    dns-server 172.16.0.2    // Adresse du serveur DNS qui lui sera fourni
 
-    Routeur(config)# exit
+### Et ce, pour chacunes des machines du réseau. ***Comme toujours, la configuration est trouvable dans le dossier Compte-rendu.***
 
-    Routeur(config)# service dhcp vlan1    // Etablir le service sur une interface
-
-### **Pour des adresses spécifiques et stables :**
-
-    ip dhcp pool CLIENT       //  On créé une pool pour chaque machine
-
-    host 192.168.1.12 255.255.255.0     // Config réseau, il faut penser à rajouter le DNS etc...
-
-    client-identifier yyyyy    // L'identifiant de la machine, adresse mac
 ### **TroubleShooting :**
-
+***Pour vérifier notre configuration***
 
     show ip dhcp binding    // Afficher les bails en cours
 
     show ip dhcp pool     // Afficher les pools adressables du service
 
-## **Lundi 11/04 Edit schéma réseau + (DNS) :** 
-<br>
-
-### En mettant en concret mon réseau sur GNs3, j'ai été amené à modifier mon schéma réseau de base, il ressemble désormais à ça : 
-
-![schém2](assets/schém2.png)
-
-### J'ai modifié plusieurs choses : 
-* J'ai retiré le Vlan 40 pour faciliter les choses notamemment pour le DHCP.
-* J'ai ajouter des switchs pour chacuns des vlans pour être dans des conditions plus réelles.
-
-### Pour le service DNS qui sera mis en place, on utilisera le service **bind9**.
-
-    sudo apt install bind9 dnsutils    // Pour l'installer
-
-### Création dossier zones :
-    sudo mkdir /etc/bind/zones
-
-### 
-
-
-
-
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-Notes : 
-
-On peut mettre des vlan avec le switch de base inclus dans gns3, les ports en mode trunk sont les ports en modes dot1q puis les autres c'est pareil que de base, en mode access.
-
-Le serveur DHCP ne va pas être géré par le routeur mais par une machine elle-même qui gérera une interface pour chaque vlan avec le module 8021q dans modprobe etc.
+## **Configuration des machines avec Docker :** 

@@ -1,0 +1,7 @@
+Pour construire le docker :
+
+docker build -t <nom_voulu> /répertoire/du/docker
+
+Pour tester/démarrer le docker : 
+
+docker run --tty --interactive --cap-add=NET_ADMIN <nom_docker>
