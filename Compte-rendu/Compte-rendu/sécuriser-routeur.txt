@@ -1,6 +1,3 @@
-https://linux-note.com/cisco-securiser-lacces-a-un-router/
-
-
 Router(config)# line console 0
 Router(config-line)# password mot-de-passe-console
 Router(config-line)# login
