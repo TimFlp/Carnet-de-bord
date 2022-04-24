@@ -2,7 +2,6 @@
 ## <u> Sommaire :</u>
 * ### [Conception Réseau](#uconception-et-dessin-du-schéma-du-réseau-final-u)
 * ### [Configuration Serveur Web](#uconfiguration-serveur-web-u)
-* ### [Sécurisation Serveur Web](#u-sécurisation-serveur-web--u)
 * ### [Configuration Routeur,Vlan,DHCP](#urouteurvlandhcp--u)
 * ### [Création de Dockers Debian](#uconfiguration-des-machines-avec-docker-u)
 * ### [Création Access-lists](#ules-access-list-aclu)
@@ -51,36 +50,28 @@
 ### Pour pouvoir **mettre en place le service apache2** sur une machine **Linux** et en respectant les règles basiques de sécurité, il faut suivre une procédure très simple :
 <br>  
 
-### Tout d'abord on installe la dernière version (**pour éviter les failles de sécurité connues**) du service apache2 :
-    sudo apt install apache2
+### Tout d'abord, il faut nettoyer la machine :
 
-### Une fois fait, il faut se diriger vers les fichiers de configuration :
-    cd /etc/apache2/sites-available
+    sudo rm -rf /etc/apache2 && sudo rm -rf /var/www/html/
+    sudo apt purge -y apache2 && sudo apt autoremove
 
-### Nous copions le fichier de configuration de base en un autre qu'on appellera comme on le veut : 
-    cp 000-default.conf site.conf
+### Installation package apache2 :
 
-### Finalement, on met les bonnes configurations dans le fichier avec l'éditeur de notre choix :
-    sudo nano site.conf
+    sudo apt install apache2 
 
-A completer
+### Pour inclure le code de la page du serveur web interne : 
 
+    echo "<html><head><meta charset="utf-8"><title>Site Web Interne</title></head><body><style>html {background-color:beige}</style><h1>Wouhou รงa marche</h1><h4>Site web interne</h4></body></html>" > /var/www/html/index.html
 
------------
+### Lancer le service : 
 
-## <u> **(Sécurisation serveur web) :** </u>
-<br>
+    sudo service apache2 start
 
-### Finalement, pour compléter mon travail sur les différents serveurs web qu'il y aura dans notre plan de réseau, je me suis penché sur l'aspect sécurisation d'un serveur apache2.
-<br>  
+### Vérifier le statut : 
 
-### On modifiera les éléments dans les fichiers de configuration suivants : 
-    /etc/apache2/apache2.conf
+    sudo service apache2 status
 
-### Ainsi que pour le virtual host du serveur :
-    /etc/apache2/sites-available/site.conf
-
-----------
+-----
 
 ## <u>**(Routeur,Vlan,DHCP) :** </u>
 <br>
@@ -320,8 +311,8 @@ A completer
 
     Instructions : 
 
-    sudo cp /etc/bind/bd.local /etc/bind/Rtequila
-    sudo cp /etc/bind/bd.local /etc/bind/Inverse
+    sudo cp /etc/bind/db.local /etc/bind/Rtequila
+    sudo cp /etc/bind/db.local /etc/bind/Inverse
 
         1) Modifier le fichier named.conf : 
             nano named.conf
@@ -333,11 +324,15 @@ A completer
     zone "Rtequila" IN {
             type master;
             file "/etc/bind/Rtequila";
+            forwarders 8.8.8.8;
+            forwarder-only;
     };
 
     zone "2.0.16.172.in-addr.arpa." IN {
             type master;
             file "/etc/bind/inverse";
+            forwarders 8.8.8.8;
+            forwarder-only;
     };
 
 
@@ -393,15 +388,12 @@ A completer
 ### **Pour tester ma configuration, je peux faire différents tests avec l'utilitaire nslookup ou bien dig**
 
     nslookup
-        > service type
-        > IP serveur 
-    ![nslookup](/assets/nslookup.jpg)
+        > set type=<type>    ( On peut mettre NS, A, MX... )
+        > <IP serveur>
 
 ### Pour dig : 
 
     dig -t type Rtequila
-
-## RAJOUTER FORWARD 8.8.8.8
 
 ----
 
