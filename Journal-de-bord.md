@@ -1,5 +1,6 @@
 # Carnet de bord individuel pour la SAE 21 :
 ## <u> Sommaire :</u>
+* ### [Choix environnement de Virtualisation]()
 * ### [Conception Réseau](#uconception-et-dessin-du-schéma-du-réseau-final-u)
 * ### [Configuration Serveur Web](#uconfiguration-serveur-web-u)
 * ### [Configuration Routeur,Vlan,DHCP](#urouteurvlandhcp--u)
@@ -10,6 +11,19 @@
 
 ----- 
 
+## <u>**Choix de l'environnement de Virtualisation :**</u>
+
+### Puisque j'étais chargé de construire le réseau virtuel pour l'entreprise fictive, je devais choisir entre le logiciel de Cisco, *PacketTracer* , ou bien alors GNs3.
+
+<br>
+
+![logogns3](assets/gns3.png)
+
+### J'ai donc choisi le logiciel GNS3 car il permet simplement d'émuler des dizaines de machines comme des routeurs ou bien des switchs qui peuvent être de plusieurs marques différentes tant qu'on a les bonnes images. Mais surtout car il implémente la possibilité de rajouter des dockers, qui serviront pour les différents services réseaux comme le serveur Web mais aussi tout simplement les machines qui componseront le réseau.
+
+<br>
+
+------
 ## <u>**Conception et dessin du schéma du réseau final :**</u>
 
 ### *Le plus important avant de commencer quoi que ce soit de concret pour la réalisation du réseau de l'entreprise, il faut faire un plan. Il faut donc réfléchir sur quel réseau nous allons placer nos 3 zones distinctes, combien il y aura de machines en total, en bref avoir une vue concrète pour nous simplifier la vie et ne pas partir dans tout les sens.*    <br>     
